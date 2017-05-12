@@ -12,7 +12,7 @@ int32 NO_RESPONSE=-1
 int32 TIMED_OUT=-2
 int32 TEXT_RESPONSE=-3
 int32 PREEMPTED=-4
-int32 CB_RESPONSE=-5
+int32 CB_RESPONSE=42
 
 int32 type
 string message

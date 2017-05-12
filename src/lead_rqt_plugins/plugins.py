@@ -49,7 +49,8 @@ from lead_rqt_plugins.srv import RoomDialog, RoomDialogResponse, RoomDialogReque
 from functools import partial
 from qt_gui.plugin import Plugin
 from python_qt_binding.QtGui import QFont, QGridLayout, QLabel, QLineEdit, \
-                                    QPushButton, QTextBrowser, QVBoxLayout, QWidget, QComboBox
+                                    QPushButton, QTextBrowser, QVBoxLayout, QWidget, QComboBox, \
+                                    QHBoxLayout
 
 import os
 import rospkg
@@ -75,14 +76,15 @@ class RoomDialogPlugin(Plugin):
         self._layout.addWidget(self._text_browser)
         self._button_layout = QGridLayout()
         self._layout.addLayout(self._button_layout)
+        rospy.loginfo("Hello world")
 
         # Add combobox
         self._cb_layout = QHBoxLayout()
         self._cb = QComboBox()
         self._layout.addLayout(self._cb_layout)
 
-        layout = QVBoxLayout(self._widget)
-        layout.addWidget(self.button)
+        #layout = QVBoxLayout(self._widget)
+        #layout.addWidget(self._button)
         self._widget.setObjectName('RoomDialogPluginUI')
         if context.serial_number() > 1:
             self._widget.setWindowTitle(self._widget.windowTitle() +
@@ -154,11 +156,13 @@ class RoomDialogPlugin(Plugin):
         
         # add handling of combobox
         elif req.type == RoomDialogRequest.COMBOBOX_QUESTION:
+            rospy.loginfo("Combobox selected")
             for index, options in enumerate(req.options):
                 self._cb.addItem(options) 
-                self.buttons.append(options)
-            self._cb.currentIndexChanged.connect(self.handle_cb)
+                rospy.loginfo(options)
+                #self.buttons.append(options)
             # NOTE COULD INTRODUCE BUG
+            self._cb.currentIndexChanged.connect(self.handle_cb)
             self._cb_layout.addWidget(self._cb)
 
     def timeout(self):
@@ -187,14 +191,18 @@ class RoomDialogPlugin(Plugin):
     
     def handle_cb(self, index):
         # This will be the sign format seen around building ex: 3.404
+        rospy.loginfo("handling cb")
         roomHuman = self._cb.currentText()
         # modify string into robot format ex: d3_404
         splitHuman = roomHuman.split('.', 1)
         roomRobot = 'd' + splitHuman[0] + '_' + splitHuman[1]
+        roomRobot = str(roomRobot)
         self.response = RoomDialogResponse(
             RoomDialogRequest.CB_RESPONSE,
             roomRobot
             )
+        self.clean()
+        self.resopnse_ready = True
 
     def save_settings(self, plugin_settings, instance_settings):
         # TODO save intrinsic configuration, usually using:
