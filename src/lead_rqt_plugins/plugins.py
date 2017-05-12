@@ -202,7 +202,7 @@ class RoomDialogPlugin(Plugin):
             roomRobot
             )
         self.clean()
-        self.resopnse_ready = True
+        self.response_ready = True
 
     def save_settings(self, plugin_settings, instance_settings):
         # TODO save intrinsic configuration, usually using:
